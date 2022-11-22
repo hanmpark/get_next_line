@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/22 13:56:39 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/22 16:03:37 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,9 @@
 
 char	*get_next_line(int fd)
 {
+	int		i;
+	char	*s;
 
+	if (!fd)
+		fd = open("");
 }
