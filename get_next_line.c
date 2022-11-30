@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/30 14:05:21 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 19:08:59 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,6 @@ int	ft_chars_after_n(char *str)
 	return (count);
 }
 
-int	ft_chars_before_n(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	return (i);
-}
-
 char	*ft_substr_n(char *str)
 {
 	int		i;
@@ -103,49 +93,53 @@ char	*ft_substr_n(char *str)
 
 char	*get_next_line(int fd)
 {
+	char		*buf;
 	char		*line;
 	static char	*stash;
-	char		*buf;
+	int			check;
 
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	buf[BUFFER_SIZE] = 0;
-	stash = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!stash)
-		return (NULL);
-	*stash = 0;
-	line = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	line = malloc(sizeof(char));
 	if (!line)
 		return (NULL);
 	*line = 0;
+	if (!stash)
+	{
+		stash = malloc(sizeof(char));
+		if (!stash)
+			return (NULL);
+		*stash = 0;
+	}
 	while (!check_n(stash))
 	{
-		read(fd, buf, BUFFER_SIZE);
-		ft_strcpy(stash, buf);
-		printf("buf = |%s|\n", buf);
-		printf("stash = |%s|\n", stash);
-		if (!*line)
-			ft_strcpy(line, stash);
-		else
-			line = ft_strjoin(line, stash);
-		printf("line = |%s|\n \n", line);
+		check = read(fd, buf, BUFFER_SIZE);
+		if (check < BUFFER_SIZE)
+			buf[check] = 0;
+		stash = ft_strjoin(stash, buf);
+		if (check <= 0)
+			break ;
 	}
+	line = ft_strjoin(line, stash);
+	free(stash);
 	free(buf);
 	stash = ft_substr_n(line);
 	printf("stash is now = |%s|\n", stash);
 	return (line);
 }
 
-/*\*/
+/*
 #include <fcntl.h>
 int	main(void)
 {
 	int		fd;
+	int		line = 1;
 
 	fd = open("text.txt", O_RDONLY);
-	printf("fd=%d\n", fd);
-	printf("line printed = |%s|\n", get_next_line(fd));
+	while (line--)
+		printf("line printed = |%s|\n", get_next_line(fd));
 	return (0);
 }
-/**/
+*/
