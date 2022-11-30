@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:56:48 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/29 19:31:20 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 10:29:25 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,19 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef	struct s_list
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 5
+# endif
+
+typedef struct s_list
 {
-	static char		*tmp;
+	char			*tmp;
 	struct s_list	*next;
 }	t_list;
+
+char	*ft_strncat(char *dst, char *src, size_t size);
+size_t	ft_strlen(char *str);
+char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strcpy(char *dst, char *src);
 
 #endif

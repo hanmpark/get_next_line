@@ -6,51 +6,77 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:58:18 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/29 19:37:40 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 10:29:12 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_list	*ft_lstnew(void *content)
+size_t	ft_strlen(char *str)
 {
-	t_list	*lst;
+	int	i;
 
-	lst = malloc(sizeof(t_list));
-	if (!lst)
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strcat(char *dst, char *src)
+{
+	size_t	dsize;
+	size_t	ssize;
+	size_t	i;
+
+	if (!dst || !src)
 		return (NULL);
-	lst->tmp = content;
-	lst->next = 0;
-	return (lst);
+	dsize = ft_strlen(dst);
+	i = 0;
+	while (src[i])
+	{
+		dst[dsize + i] = src[i];
+		i++;
+	}
+	dst[dsize + i] = '\0';
+	return (dst);
 }
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+char	*ft_strcpy(char *dst, char *src)
 {
-	if (lst && del)
+	size_t	i;
+
+	i = 0;
+	if (!dst || !src)
+		return (NULL);
+	while (src[i])
 	{
-		if (lst->tmp)
-		{
-			del(lst->tmp);
-			free(lst);
-		}
-		lst = NULL;
+		dst[i] = src[i];
+		i++;
 	}
+	dst[i] = '\0';
+	return (dst);
 }
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+char	*ft_strjoin(char *s1, char *s2)
 {
-	t_list	*theone;
-	t_list	*next;
+	char	*dest;
+	size_t	dstsize;
+	size_t	i;
 
-	if (lst && del)
+	if (!s1 || !s2)
+		return (NULL);
+	dstsize = ft_strlen(s1) + ft_strlen(s2);
+	dest = malloc((dstsize + 1) * sizeof(char));
+	if (!dest)
+		return (NULL);
+	dest = ft_strcpy(dest, s1);
+	i = ft_strlen(s1);
+	while (i < dstsize)
 	{
-		theone = *lst;
-		while (theone)
-		{
-			next = theone->next;
-			ft_lstdelone(theone, del);
-			theone = next;
-		}
-		*lst = NULL;
+		dest[i] = *s2;
+		s2++;
+		i++;
 	}
+	dest[dstsize] = 0;
+	return (dest);
 }

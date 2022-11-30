@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/29 19:23:07 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 10:35:00 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,21 @@
 ** buf = "\nHow are you to"
 */
 
-int	ft_countc(char *str)
+int	check_n(char *str)
 {
-	int	count;
+	int	i;
 
-	count = 0;
-	while (str[count] && str[count] != '\n')
-		count++;
-	return (count);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
-int	ft_count_after(char *str)
+int	ft_chars_after_n(char *str)
 {
 	int	count;
 
@@ -55,48 +59,66 @@ int	ft_count_after(char *str)
 	return (count);
 }
 
-char	*ft_strncpy(char *s, char *buf, size_t len)
+int	ft_chars_before_n(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (buf[i] && len--)
-	{
-		s[i] = buf[i];
+	while (str[i] && str[i] != '\n')
 		i++;
-	}
-	s[i] = '\0';
-	return (s);
+	return (i);
 }
 
+char	*ft_substr_n(char *str)
+{
+	int		i;
+	int		j;
+	char	*dst;
+
+	i = 0;
+	j = 0;
+	while (str[i] && str[i] != '\n')
+		i++;
+	j = ft_chars_after_n(str);
+	dst = malloc((j + 1) * sizeof(char));
+	if (!dst)
+		return (NULL);
+	while (str[i])
+	{
+		*dst = str[i++];
+		dst++;
+	}
+	str[i - j] = 0;
+	return (dst - j);
+}
+#include <string.h>
 char	*get_next_line(int fd)
 {
-	int			len;
-	char		*s;
-	static char	*buf;
-	int			countafter;
-	int			bcount; //for printf
+	char	*line;
+	char	*stash;
+	char	*buf;
 
-	countafter = 0;
-	if (buf)
-	{
-		countafter = ft_count_after(buf);
-		free(buf);
-	}
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
-	buf[BUFFER_SIZE] = 0;
-	bcount = read(fd, buf, BUFFER_SIZE);
-	printf("bytes read=%d\n", bcount);
-	len = ft_countc(buf);
-	s = malloc((len + 1) * sizeof(char));
-	if (!s)
-		return (NULL);
-	s = ft_strncpy(s, buf, len);
-	return (s);
+	line = strdup("");
+	while (!check_n(line))
+	{
+		read(fd, buf, BUFFER_SIZE);
+		stash = malloc(BUFFER_SIZE * sizeof(char));
+		if (!stash)
+			return (NULL);
+		ft_strcpy(stash, buf);
+		if (!line)
+			line = strdup(stash);
+		line = ft_strjoin(line, stash);
+		printf("stash = |%s|\n", line);
+	}
+	free(buf);
+	return (line);
 }
 
+/*\*/
 #include <fcntl.h>
 int	main(void)
 {
@@ -104,6 +126,7 @@ int	main(void)
 
 	fd = open("text.txt", O_RDONLY);
 	printf("fd=%d\n", fd);
-	printf("%s\n", get_next_line(fd));
+	printf("line printed = |%s|\n", get_next_line(fd));
 	return (0);
 }
+/**/
