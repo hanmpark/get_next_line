@@ -6,12 +6,13 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/30 10:35:00 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 14:05:21 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
+#include <string.h>
 
 /*
 ** Steps to follow:
@@ -32,14 +33,11 @@
 
 int	check_n(char *str)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
+	while (*str)
 	{
-		if (str[i] == '\n')
+		if (*str == '\n')
 			return (1);
-		i++;
+		str++;
 	}
 	return (0);
 }
@@ -53,8 +51,13 @@ int	ft_chars_after_n(char *str)
 		str++;
 	while (*str)
 	{
-		str++;
-		count++;
+		if (*str == '\n')
+			str++;
+		else
+		{
+			str++;
+			count++;
+		}
 	}
 	return (count);
 }
@@ -85,36 +88,52 @@ char	*ft_substr_n(char *str)
 		return (NULL);
 	while (str[i])
 	{
-		*dst = str[i++];
-		dst++;
+		if (str[i] == '\n')
+			i++;
+		else
+		{
+			*dst = str[i++];
+			dst++;
+		}
 	}
+	*dst = 0;
 	str[i - j] = 0;
 	return (dst - j);
 }
-#include <string.h>
+
 char	*get_next_line(int fd)
 {
-	char	*line;
-	char	*stash;
-	char	*buf;
+	char		*line;
+	static char	*stash;
+	char		*buf;
 
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
-	line = strdup("");
-	while (!check_n(line))
+	buf[BUFFER_SIZE] = 0;
+	stash = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!stash)
+		return (NULL);
+	*stash = 0;
+	line = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!line)
+		return (NULL);
+	*line = 0;
+	while (!check_n(stash))
 	{
 		read(fd, buf, BUFFER_SIZE);
-		stash = malloc(BUFFER_SIZE * sizeof(char));
-		if (!stash)
-			return (NULL);
 		ft_strcpy(stash, buf);
-		if (!line)
-			line = strdup(stash);
-		line = ft_strjoin(line, stash);
-		printf("stash = |%s|\n", line);
+		printf("buf = |%s|\n", buf);
+		printf("stash = |%s|\n", stash);
+		if (!*line)
+			ft_strcpy(line, stash);
+		else
+			line = ft_strjoin(line, stash);
+		printf("line = |%s|\n \n", line);
 	}
 	free(buf);
+	stash = ft_substr_n(line);
+	printf("stash is now = |%s|\n", stash);
 	return (line);
 }
 

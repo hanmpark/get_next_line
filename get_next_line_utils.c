@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:58:18 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/30 10:29:12 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/11/30 13:32:52 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,6 @@ size_t	ft_strlen(char *str)
 	while (str[i])
 		i++;
 	return (i);
-}
-
-char	*ft_strcat(char *dst, char *src)
-{
-	size_t	dsize;
-	size_t	ssize;
-	size_t	i;
-
-	if (!dst || !src)
-		return (NULL);
-	dsize = ft_strlen(dst);
-	i = 0;
-	while (src[i])
-	{
-		dst[dsize + i] = src[i];
-		i++;
-	}
-	dst[dsize + i] = '\0';
-	return (dst);
 }
 
 char	*ft_strcpy(char *dst, char *src)
