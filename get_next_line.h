@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:56:48 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/01 08:14:01 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/01 17:44:57 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,8 @@
 
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *str);
-char	*ft_strcpy(char *dst, char *src);
-char	*ft_buffjoin(char *s1, char *s2);
-int		ft_chars_after_n(char *str);
-char	*ft_substr_n(char *str);
+char	*ft_bufferjoin(char *s1, char *s2);
+char	*ft_linetrim(char *str);
+void	*ft_calloc(size_t count, size_t size);
 
 #endif

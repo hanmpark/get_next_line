@@ -5,16 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/01 11:54:57 by hanmpark         ###   ########.fr       */
+/*   Created: 2022/12/01 15:35:29 by hanmpark          #+#    #+#             */
+/*   Updated: 2022/12/01 19:05:02 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
-#include <string.h>
+#include <fcntl.h>
 
-int	check_n(char *str)
+int	ft_is_nl(char *str)
 {
 	while (*str)
 	{
@@ -25,85 +25,94 @@ int	check_n(char *str)
 	return (0);
 }
 
-char	*ft_newline(char *stash, int fd)
+int	ft_end_nl(char *str)
 {
-	char		*str;
-	char		*buf;
-	long long	check;
+	while (*str)
+		str++;
+	if (*(str - 1) == '\n')
+		return (1);
+	return (0);
+}
 
-	str = malloc(sizeof(char));
-	if (!str)
-		return (NULL);
-	*str = 0;
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+char	*ft_get_line(int fd, char *stash, char *line)
+{
+	char	*buf;
+	int		check;
+
+	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!buf)
 		return (NULL);
-	buf[BUFFER_SIZE] = 0;
-	while (!check_n(stash))
+	while (!ft_is_nl(stash))
 	{
 		check = read(fd, buf, BUFFER_SIZE);
+		buf[check] = 0;
+		stash = ft_bufferjoin(stash, buf);
 		if (check == 0)
 			break ;
-		else if (check < BUFFER_SIZE)
-			buf[check] = 0;
-		stash = ft_buffjoin(stash, buf);
 	}
-	str = ft_buffjoin(str, stash);
 	free(buf);
+	line = ft_bufferjoin(line, stash);
 	free(stash);
+	return (line);
+}
+
+char	*ft_trim_line(char *line)
+{
+	char	*str;
+	int		len;
+
+	len = ft_strlen(line);
+	if (ft_is_nl(line) && !ft_end_nl(line))
+		str = ft_linetrim(line);
+	else if (ft_end_nl(line) && len > 1 && line[len - 2] == '\n')
+		str = ft_linetrim(line);
+	else
+		str = NULL;
 	return (str);
 }
-/*
-** stash allocated '\0' byte.
-** line -> str allocated '\0' byte.
-** buf allocated BUFER_SIZE.
-** stash -> free 1st stash to concatenate buf.
-** line -> str -> allocated 
-*/
 
 char	*get_next_line(int fd)
 {
-	char		*line;
 	static char	*stash;
+	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE == 0)
 		return (NULL);
 	if (!stash || !*stash)
 	{
-		stash = malloc(sizeof(char));
+		stash = ft_calloc(1, sizeof(char));
 		if (!stash)
 			return (NULL);
-		*stash = 0;
 	}
-	line = ft_newline(stash, fd);
+	line = ft_calloc(1, sizeof(char));
+	if (!line)
+		return (NULL);
+	line = ft_get_line(fd, stash, line);
 	if (!*line)
 	{
 		free(line);
 		return (NULL);
 	}
-	stash = ft_substr_n(line);
-	printf("stash at the end = |%s|\n", stash);
-	if (*stash == 0)
-		free (stash);
+	stash = ft_trim_line(line);
+	printf("stash = %s\n", stash);
 	return (line);
 }
 
-/*\*/
-#include <fcntl.h>
 int	main(void)
 {
 	int		fd;
-	int		line = 2;
+	int		line = 3;
 	char	*str;
 
 	fd = open("text.txt", O_RDONLY);
 	while (line--)
 	{
 		str = get_next_line(fd);
-		printf("line printed = |%s|\n", str);
+		printf("line printed = |%s|\n\n", str);
 		free(str);
+		str = NULL;
 	}
+	close(fd);
 	system("leaks a.out");
 	return (0);
 }
-/**/
