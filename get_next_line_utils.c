@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:58:18 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/30 13:32:52 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/01 08:13:40 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*ft_strcpy(char *dst, char *src)
 	return (dst);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_buffjoin(char *s1, char *s2)
 {
 	char	*dest;
 	size_t	dstsize;
@@ -52,6 +52,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (NULL);
 	dest = ft_strcpy(dest, s1);
 	i = ft_strlen(s1);
+	free(s1);
 	while (i < dstsize)
 	{
 		dest[i] = *s2;
@@ -60,4 +61,44 @@ char	*ft_strjoin(char *s1, char *s2)
 	}
 	dest[dstsize] = 0;
 	return (dest);
+}
+
+int	ft_chars_after_n(char *str)
+{
+	int	count;
+
+	count = 0;
+	while (*str && *str != '\n')
+		str++;
+	if (*str == '\n')
+		str++;
+	while (*str++)
+		count++;
+	return (count);
+}
+
+char	*ft_substr_n(char *str)
+{
+	int		i;
+	int		j;
+	char	*dst;
+
+	i = 0;
+	j = 0;
+	while (str[i] && str[i] != '\n')
+		i++;
+	j = ft_chars_after_n(str);
+	dst = malloc((j + 1) * sizeof(char));
+	if (!dst)
+		return (NULL);
+	if (str[i] == '\n')
+		i++;
+	while (str[i])
+	{
+			*dst = str[i++];
+			dst++;
+	}
+	*dst = 0;
+	str[i - j] = 0;
+	return (dst - j);
 }

@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/11/30 19:14:17 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/01 09:54:47 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,62 +25,15 @@ int	check_n(char *str)
 	return (0);
 }
 
-int	ft_chars_after_n(char *str)
-{
-	int	count;
-
-	count = 0;
-	while (*str && *str != '\n')
-		str++;
-	while (*str)
-	{
-		if (*str == '\n')
-			str++;
-		else
-		{
-			str++;
-			count++;
-		}
-	}
-	return (count);
-}
-
-char	*ft_substr_n(char *str)
-{
-	int		i;
-	int		j;
-	char	*dst;
-
-	i = 0;
-	j = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	j = ft_chars_after_n(str);
-	dst = malloc((j + 1) * sizeof(char));
-	if (!dst)
-		return (NULL);
-	while (str[i])
-	{
-		if (str[i] == '\n')
-			i++;
-		else
-		{
-			*dst = str[i++];
-			dst++;
-		}
-	}
-	*dst = 0;
-	str[i - j] = 0;
-	return (dst - j);
-}
-
 char	*get_next_line(int fd)
 {
 	char		*buf;
 	char		*line;
 	static char	*stash;
-	int			check;
+	long long	check;
 
+	if (fd < 1 || fd == 2)
+		return (NULL);
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
@@ -89,7 +42,7 @@ char	*get_next_line(int fd)
 	if (!line)
 		return (NULL);
 	*line = 0;
-	if (!stash)
+	if (!stash || *stash == 0)
 	{
 		stash = malloc(sizeof(char));
 		if (!stash)
@@ -99,17 +52,23 @@ char	*get_next_line(int fd)
 	while (!check_n(stash))
 	{
 		check = read(fd, buf, BUFFER_SIZE);
+		//printf("+%lld ", check);
 		if (check < BUFFER_SIZE)
 			buf[check] = 0;
-		stash = ft_strjoin(stash, buf);
+		stash = ft_buffjoin(stash, buf);
+		//printf("%s\n", stash);
 		if (check <= 0)
 			break ;
 	}
-	line = ft_strjoin(line, stash);
+	line = ft_buffjoin(line, stash);
 	free(stash);
 	free(buf);
+	if (!*line)
+		return (NULL);
 	stash = ft_substr_n(line);
-	printf("stash is now = |%s|\n", stash);
+	if (*stash == 0)
+		free (stash);
+	//printf("stash =|%s|\n", stash);
 	return (line);
 }
 
@@ -118,11 +77,17 @@ char	*get_next_line(int fd)
 int	main(void)
 {
 	int		fd;
-	int		line = 1;
+	int		line = 2;
+	char	*str;
 
 	fd = open("text.txt", O_RDONLY);
 	while (line--)
-		printf("line printed = |%s|\n", get_next_line(fd));
+	{
+		str = get_next_line(fd);
+		printf("line printed = |%s|\n", str);
+		free(str);
+	}
+	system("leaks a.out");
 	return (0);
 }
 */
