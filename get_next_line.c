@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:55:49 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/01 09:54:47 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/01 11:54:57 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,54 +25,70 @@ int	check_n(char *str)
 	return (0);
 }
 
-char	*get_next_line(int fd)
+char	*ft_newline(char *stash, int fd)
 {
+	char		*str;
 	char		*buf;
-	char		*line;
-	static char	*stash;
 	long long	check;
 
-	if (fd < 1 || fd == 2)
+	str = malloc(sizeof(char));
+	if (!str)
 		return (NULL);
+	*str = 0;
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	buf[BUFFER_SIZE] = 0;
-	line = malloc(sizeof(char));
-	if (!line)
+	while (!check_n(stash))
+	{
+		check = read(fd, buf, BUFFER_SIZE);
+		if (check == 0)
+			break ;
+		else if (check < BUFFER_SIZE)
+			buf[check] = 0;
+		stash = ft_buffjoin(stash, buf);
+	}
+	str = ft_buffjoin(str, stash);
+	free(buf);
+	free(stash);
+	return (str);
+}
+/*
+** stash allocated '\0' byte.
+** line -> str allocated '\0' byte.
+** buf allocated BUFER_SIZE.
+** stash -> free 1st stash to concatenate buf.
+** line -> str -> allocated 
+*/
+
+char	*get_next_line(int fd)
+{
+	char		*line;
+	static char	*stash;
+
+	if (fd < 0 || BUFFER_SIZE == 0)
 		return (NULL);
-	*line = 0;
-	if (!stash || *stash == 0)
+	if (!stash || !*stash)
 	{
 		stash = malloc(sizeof(char));
 		if (!stash)
 			return (NULL);
 		*stash = 0;
 	}
-	while (!check_n(stash))
-	{
-		check = read(fd, buf, BUFFER_SIZE);
-		//printf("+%lld ", check);
-		if (check < BUFFER_SIZE)
-			buf[check] = 0;
-		stash = ft_buffjoin(stash, buf);
-		//printf("%s\n", stash);
-		if (check <= 0)
-			break ;
-	}
-	line = ft_buffjoin(line, stash);
-	free(stash);
-	free(buf);
+	line = ft_newline(stash, fd);
 	if (!*line)
+	{
+		free(line);
 		return (NULL);
+	}
 	stash = ft_substr_n(line);
+	printf("stash at the end = |%s|\n", stash);
 	if (*stash == 0)
 		free (stash);
-	//printf("stash =|%s|\n", stash);
 	return (line);
 }
 
-/*
+/*\*/
 #include <fcntl.h>
 int	main(void)
 {
@@ -90,4 +106,4 @@ int	main(void)
 	system("leaks a.out");
 	return (0);
 }
-*/
+/**/
