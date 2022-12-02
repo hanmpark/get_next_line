@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:46:43 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/01 18:10:53 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/02 19:44:25 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ char	*ft_bufferjoin(char *dest, char *src)
 	while (dest[i])
 		*joined++ = dest[i++];
 	free(dest);
-	dest = NULL;
 	i = 0;
 	while (src[i])
 		*joined++ = src[i++];

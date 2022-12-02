@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:35:29 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/01 19:05:02 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/02 19:41:18 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_end_nl(char *str)
 	return (0);
 }
 
-char	*ft_get_line(int fd, char *stash, char *line)
+char	*ft_getline(int fd, char *stash, char *line)
 {
 	char	*buf;
 	int		check;
@@ -45,29 +45,46 @@ char	*ft_get_line(int fd, char *stash, char *line)
 	while (!ft_is_nl(stash))
 	{
 		check = read(fd, buf, BUFFER_SIZE);
+		printf("check = %d\n", check);
+		if (check <= 0)
+			break ;
 		buf[check] = 0;
 		stash = ft_bufferjoin(stash, buf);
-		if (check == 0)
-			break ;
 	}
 	free(buf);
+	if (check == -1)
+	{
+		free(stash);
+		free(line);
+		return (NULL);
+	}
 	line = ft_bufferjoin(line, stash);
 	free(stash);
 	return (line);
 }
 
-char	*ft_trim_line(char *line)
+char	*ft_checkline(char *line)
 {
 	char	*str;
 	int		len;
 
+	if (!line)
+	{
+		line = NULL;
+		return (NULL);
+	}
+	if (!*line)
+	{
+		free(line);
+		line = NULL;
+		return (NULL);
+	}
+	str = NULL;
 	len = ft_strlen(line);
 	if (ft_is_nl(line) && !ft_end_nl(line))
 		str = ft_linetrim(line);
 	else if (ft_end_nl(line) && len > 1 && line[len - 2] == '\n')
 		str = ft_linetrim(line);
-	else
-		str = NULL;
 	return (str);
 }
 
@@ -87,21 +104,15 @@ char	*get_next_line(int fd)
 	line = ft_calloc(1, sizeof(char));
 	if (!line)
 		return (NULL);
-	line = ft_get_line(fd, stash, line);
-	if (!*line)
-	{
-		free(line);
-		return (NULL);
-	}
-	stash = ft_trim_line(line);
-	printf("stash = %s\n", stash);
+	line = ft_getline(fd, stash, line);
+	stash = ft_checkline(line);
 	return (line);
 }
 
 int	main(void)
 {
 	int		fd;
-	int		line = 3;
+	int		line = 1;
 	char	*str;
 
 	fd = open("text.txt", O_RDONLY);
