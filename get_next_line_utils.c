@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:46:43 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/02 19:44:25 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/02 21:55:50 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,18 +70,20 @@ char	*ft_linetrim(char *str)
 void	*ft_calloc(size_t count, size_t size)
 {
 	char	*tb;
-	size_t	i;
+	size_t	len;
+	int		i;
 
 	if (count > 4294967295)
 		return (NULL);
-	i = count * size;
-	tb = malloc(i);
+	len = count * size;
+	tb = malloc(len);
 	if (!tb)
 		return (NULL);
-	while (i)
+	i = 0;
+	while (len)
 	{
-		tb[i] = 0;
-		i--;
+		tb[i++] = 0;
+		len--;
 	}
 	return (tb);
 }

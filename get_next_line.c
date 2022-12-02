@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:35:29 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/02 19:41:18 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/02 22:40:42 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ char	*ft_getline(int fd, char *stash, char *line)
 	while (!ft_is_nl(stash))
 	{
 		check = read(fd, buf, BUFFER_SIZE);
-		printf("check = %d\n", check);
 		if (check <= 0)
 			break ;
 		buf[check] = 0;
@@ -68,17 +67,6 @@ char	*ft_checkline(char *line)
 	char	*str;
 	int		len;
 
-	if (!line)
-	{
-		line = NULL;
-		return (NULL);
-	}
-	if (!*line)
-	{
-		free(line);
-		line = NULL;
-		return (NULL);
-	}
 	str = NULL;
 	len = ft_strlen(line);
 	if (ft_is_nl(line) && !ft_end_nl(line))
@@ -105,6 +93,13 @@ char	*get_next_line(int fd)
 	if (!line)
 		return (NULL);
 	line = ft_getline(fd, stash, line);
+	if (!line)
+		return (NULL);
+	if (!*line)
+	{
+		free(line);
+		return (NULL);
+	}
 	stash = ft_checkline(line);
 	return (line);
 }
@@ -112,18 +107,18 @@ char	*get_next_line(int fd)
 int	main(void)
 {
 	int		fd;
-	int		line = 1;
+	int		line = 12;
 	char	*str;
 
 	fd = open("text.txt", O_RDONLY);
 	while (line--)
 	{
 		str = get_next_line(fd);
-		printf("line printed = |%s|\n\n", str);
+		printf("line printed = %s", str);
 		free(str);
 		str = NULL;
 	}
 	close(fd);
-	system("leaks a.out");
+	//system("leaks a.out");
 	return (0);
 }
