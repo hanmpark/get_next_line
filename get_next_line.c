@@ -6,23 +6,29 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:35:29 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/02 22:40:42 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/03 19:53:44 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 int	ft_is_nl(char *str)
 {
+	int		times;
+
+	times = 0;
+	if (!str)
+		return (times);
 	while (*str)
 	{
 		if (*str == '\n')
-			return (1);
+			times++;
 		str++;
 	}
-	return (0);
+	return (times);
 }
 
 int	ft_end_nl(char *str)
@@ -37,7 +43,7 @@ int	ft_end_nl(char *str)
 char	*ft_getline(int fd, char *stash, char *line)
 {
 	char	*buf;
-	int		check;
+	ssize_t	check;
 
 	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!buf)
@@ -45,18 +51,19 @@ char	*ft_getline(int fd, char *stash, char *line)
 	while (!ft_is_nl(stash))
 	{
 		check = read(fd, buf, BUFFER_SIZE);
-		if (check <= 0)
-			break ;
+		if (check == -1)
+		{
+			free(buf);
+			free(line);
+			free(stash);
+			return (NULL);
+		}
 		buf[check] = 0;
 		stash = ft_bufferjoin(stash, buf);
+		if (check == 0)
+			break ;
 	}
 	free(buf);
-	if (check == -1)
-	{
-		free(stash);
-		free(line);
-		return (NULL);
-	}
 	line = ft_bufferjoin(line, stash);
 	free(stash);
 	return (line);
@@ -65,13 +72,13 @@ char	*ft_getline(int fd, char *stash, char *line)
 char	*ft_checkline(char *line)
 {
 	char	*str;
-	int		len;
+	size_t	len;
 
 	str = NULL;
 	len = ft_strlen(line);
-	if (ft_is_nl(line) && !ft_end_nl(line))
+	if (ft_is_nl(line) == 1 && !ft_end_nl(line))
 		str = ft_linetrim(line);
-	else if (ft_end_nl(line) && len > 1 && line[len - 2] == '\n')
+	else if (ft_is_nl(line) > 1)
 		str = ft_linetrim(line);
 	return (str);
 }
@@ -81,20 +88,17 @@ char	*get_next_line(int fd)
 	static char	*stash;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE == 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!stash || !*stash)
-	{
-		stash = ft_calloc(1, sizeof(char));
-		if (!stash)
-			return (NULL);
-	}
 	line = ft_calloc(1, sizeof(char));
 	if (!line)
 		return (NULL);
 	line = ft_getline(fd, stash, line);
 	if (!line)
+	{
+		stash = NULL;
 		return (NULL);
+	}
 	if (!*line)
 	{
 		free(line);
@@ -103,22 +107,29 @@ char	*get_next_line(int fd)
 	stash = ft_checkline(line);
 	return (line);
 }
-
-int	main(void)
+/*
+int	main(int argc, char **argv)
 {
 	int		fd;
-	int		line = 12;
+	int		line;
+	int		linenbr;
 	char	*str;
 
+	if (argc != 2)
+		return (printf("Too many arguments !\n"));
+	else if (!atoi(argv[1]))
+		return (printf("That's not a number !\n"));
 	fd = open("text.txt", O_RDONLY);
+	linenbr = 1;
+	line = atoi(argv[1]);
 	while (line--)
 	{
 		str = get_next_line(fd);
-		printf("line printed = %s", str);
+		printf("%d. line printed = %s", linenbr++, str);
 		free(str);
 		str = NULL;
 	}
-	close(fd);
 	//system("leaks a.out");
 	return (0);
 }
+*/

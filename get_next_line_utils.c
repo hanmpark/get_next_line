@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:46:43 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/02 21:55:50 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/03 18:59:17 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 size_t	ft_strlen(char *str)
 {
-	int	len;
+	size_t	len;
 
 	len = 0;
 	while (str[len])
@@ -24,10 +24,16 @@ size_t	ft_strlen(char *str)
 
 char	*ft_bufferjoin(char *dest, char *src)
 {
-	char	*joined;
-	int		fulllen;
-	int		i;
+	char		*joined;
+	size_t		fulllen;
+	int			i;
 
+	if (!dest)
+	{
+		dest = ft_calloc(1, sizeof(char));
+		if (!dest)
+			return (NULL);
+	}
 	i = 0;
 	fulllen = ft_strlen(dest) + ft_strlen(src);
 	joined = malloc((fulllen + 1) * sizeof(char));
@@ -46,8 +52,8 @@ char	*ft_bufferjoin(char *dest, char *src)
 char	*ft_linetrim(char *str)
 {
 	char	*tstr;
-	int		i;
-	int		len;
+	size_t	i;
+	size_t	len;
 
 	i = 0;
 	len = 0;
