@@ -1,0 +1,2 @@
+I am the second file
+and I have two lines.
