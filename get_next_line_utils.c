@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:46:43 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/04 18:53:54 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/05 07:14:41 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ size_t	ft_strlen(char *str)
 	while (str[len])
 		len++;
 	return (len);
+}
+
+void	ft_freeall(char *buf, char *line, char *stash)
+{
+	free(buf);
+	free(line);
+	free(stash);
 }
 
 void	*ft_calloc(size_t count, size_t size)

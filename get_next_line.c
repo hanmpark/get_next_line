@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 15:35:29 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/04 18:58:36 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/05 07:16:20 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,55 +28,48 @@ int	ft_is_nl(char *str)
 	return (times);
 }
 
-void	ft_freeall(char *buf, char *line, char *stash)
+char	*ft_read(int fd, char *stash, char *get_line)
 {
-	free(buf);
-	free(line);
-	free(stash);
-}
-
-char	*ft_getline(int fd, char *stash, char *line)
-{
-	char	*buf;
+	char	*buffer;
 	ssize_t	check;
 
-	buf = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
-	if (!buf)
+	buffer = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (!buffer)
 		return (NULL);
 	check = BUFFER_SIZE;
 	while (check == BUFFER_SIZE && !ft_is_nl(stash))
 	{
-		check = read(fd, buf, BUFFER_SIZE);
+		check = read(fd, buffer, BUFFER_SIZE);
 		if (check == -1)
 		{
-			ft_freeall(buf, line, stash);
+			ft_freeall(buffer, get_line, stash);
 			return (NULL);
 		}
-		buf[check] = 0;
-		stash = ft_bufferjoin(stash, buf);
+		buffer[check] = 0;
+		stash = ft_bufferjoin(stash, buffer);
 	}
-	free(buf);
-	line = ft_bufferjoin(line, stash);
+	free(buffer);
+	get_line = ft_bufferjoin(get_line, stash);
 	free(stash);
-	return (line);
+	return (get_line);
 }
 
-char	*ft_checktrim(char *line)
+char	*ft_checktrim(char *not_trimmed_line)
 {
 	char	*stash;
 	int		i;
 
 	stash = NULL;
 	i = 0;
-	if (ft_is_nl(line) == 1)
+	if (ft_is_nl(not_trimmed_line) == 1)
 	{
-		while (line[i + 1])
+		while (not_trimmed_line[i + 1])
 			i++;
-		if (line[i] != '\n')
-			stash = ft_linetrim(line);
+		if (not_trimmed_line[i] != '\n')
+			stash = ft_linetrim(not_trimmed_line);
 	}
-	if (ft_is_nl(line) > 1)
-		stash = ft_linetrim(line);
+	if (ft_is_nl(not_trimmed_line) > 1)
+		stash = ft_linetrim(not_trimmed_line);
 	return (stash);
 }
 
@@ -90,7 +83,7 @@ char	*get_next_line(int fd)
 	line = ft_calloc(1, sizeof(char));
 	if (!line)
 		return (NULL);
-	line = ft_getline(fd, stash, line);
+	line = ft_read(fd, stash, line);
 	if (!line)
 	{
 		stash = NULL;

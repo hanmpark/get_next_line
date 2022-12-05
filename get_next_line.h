@@ -6,7 +6,7 @@
 /*   By: hanmpark <hanmpark@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 13:56:48 by hanmpark          #+#    #+#             */
-/*   Updated: 2022/12/03 18:59:23 by hanmpark         ###   ########.fr       */
+/*   Updated: 2022/12/05 07:15:06 by hanmpark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@
 
 char	*get_next_line(int fd);
 size_t	ft_strlen(char *str);
+void	ft_freeall(char *buf, char *line, char *stash);
+void	*ft_calloc(size_t count, size_t size);
 char	*ft_bufferjoin(char *s1, char *s2);
 char	*ft_linetrim(char *str);
-void	*ft_calloc(size_t count, size_t size);
 
 #endif
