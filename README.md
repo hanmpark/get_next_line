@@ -1,6 +1,5 @@
-# get_next_line
-This project is about programming a function that returns a line read from a file descriptor.
+<h1 align="center">get_next_line</h1>
 
-A 42 common core's project which consists in creating a function that reads a line (reading each byte until it find '\n' or NULL) in a text file.
+A 42 common core's project which consists in coding a function that reads and returns a line (reading each byte until it finds '\n' or NULL) from an existing file descriptor.
 
-Discovered **static variables**.
+The main goal of this project is to understand what are static variables and manage leaks.
