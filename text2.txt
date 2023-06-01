@@ -1,3 +1,0 @@
-I am the third file
-and I have two
-plus one lines.
